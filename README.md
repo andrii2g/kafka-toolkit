@@ -63,10 +63,9 @@ Demo topics:
 
 ## Common Commands
 
-These commands are useful after the demo is running. The script commands require
-Kafka CLI tools on your host `PATH`, or `KAFKA_BIN_DIR` pointing to a Kafka
-installation. `make topics`, `make lag`, and `make smoke` run Kafka CLI tools
-inside the Docker container and do not require host Kafka CLI tools.
+These commands are useful after the demo is running. The default Makefile demo
+targets run Kafka CLI tools inside the Docker container and do not require host
+Kafka CLI tools.
 
 ```bash
 make up
@@ -85,7 +84,17 @@ Host-side script variants are also available:
 ```bash
 make topics-host
 make lag-host
+make lag-report-host
+make snapshot-host
 make smoke-host
+```
+
+To run any script against the Docker demo without installing Kafka CLI tools on
+the host, set `KAFKA_BIN_DIR` to the Docker wrapper directory:
+
+```bash
+KAFKA_BIN_DIR="$PWD/docker-bin" ./scripts/kafka-group-state.sh --bootstrap kafka:29092 --group orders-worker
+KAFKA_BIN_DIR="$PWD/docker-bin" ./scripts/kafka-topic-size.sh --bootstrap kafka:29092 --topic orders
 ```
 
 ## Cleanup Docker Data

@@ -1,4 +1,6 @@
-.PHONY: up down restart logs ps topics topics-host lag lag-host lag-report snapshot smoke smoke-host test test-optional shellcheck
+KAFKA_DOCKER_BIN := $(CURDIR)/docker-bin
+
+.PHONY: up down restart logs ps topics topics-host lag lag-host lag-report lag-report-host snapshot snapshot-host smoke smoke-host test test-optional shellcheck
 
 up:
 	docker compose up -d --build
@@ -23,19 +25,25 @@ topics-host:
 	./samples/topics.sh --bootstrap localhost:9092
 
 lag:
-	docker compose exec kafka /opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server kafka:29092 --describe --group orders-worker
+	KAFKA_BIN_DIR="$(KAFKA_DOCKER_BIN)" ./scripts/kafka-lag.sh --bootstrap kafka:29092 --group orders-worker --topic orders
 
 lag-host:
 	./scripts/kafka-lag.sh --bootstrap localhost:9092 --group orders-worker --topic orders
 
 lag-report:
+	KAFKA_BIN_DIR="$(KAFKA_DOCKER_BIN)" ./scripts/kafka-lag-report.sh --bootstrap kafka:29092 --group orders-worker --topic orders --out samples/reports/lag-report.local.md
+
+lag-report-host:
 	./scripts/kafka-lag-report.sh --bootstrap localhost:9092 --group orders-worker --topic orders --out samples/reports/lag-report.local.md
 
 snapshot:
+	KAFKA_BIN_DIR="$(KAFKA_DOCKER_BIN)" ./scripts/kafka-lag-snapshot.sh --bootstrap kafka:29092 --group orders-worker --topic orders --out samples/reports/lag-snapshot.local.csv
+
+snapshot-host:
 	./scripts/kafka-lag-snapshot.sh --bootstrap localhost:9092 --group orders-worker --topic orders --out samples/reports/lag-snapshot.local.csv
 
 smoke:
-	docker compose exec kafka bash -lc 'MESSAGE_ID="kafka-toolkit-smoke-$$(date +%s)-$$RANDOM"; echo "$$MESSAGE_ID" | /opt/kafka/bin/kafka-console-producer.sh --bootstrap-server kafka:29092 --topic healthcheck.kafka >/dev/null; /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:29092 --topic healthcheck.kafka --from-beginning --max-messages 100 --timeout-ms 10000 2>/dev/null | grep -F "$$MESSAGE_ID" >/dev/null && echo "OK: message roundtrip successful"'
+	KAFKA_BIN_DIR="$(KAFKA_DOCKER_BIN)" ./scripts/kafka-smoke-test.sh --bootstrap kafka:29092 --topic healthcheck.kafka
 
 smoke-host:
 	./scripts/kafka-smoke-test.sh --bootstrap localhost:9092 --topic healthcheck.kafka
