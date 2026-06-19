@@ -1,0 +1,14 @@
+{
+  "generatedUtc": "2026-06-19T12:00:00Z",
+  "group": "orders-worker",
+  "topicFilter": "orders",
+  "offsets": [
+    {
+      "topic": "orders",
+      "partition": 0,
+      "currentOffset": 12500,
+      "logEndOffset": 13000,
+      "lag": 500
+    }
+  ]
+}

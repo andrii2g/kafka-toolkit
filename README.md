@@ -1,36 +1,38 @@
 # kafka-toolkit
 
-Small Kafka operations scripts and a local Docker Compose demo.
+Small Bash/Python tools for day-to-day Kafka diagnostics, plus a Docker Compose
+demo with Kafka, Kafka UI, sample producer, and sample consumers.
 
-## Local plan file
-
-The implementation plan is kept as a local-only file and must not be staged,
-committed, or pushed. The repository `.gitignore` intentionally ignores
-`*PLAN.md`.
+The local implementation plan is intentionally not committed. `.gitignore`
+keeps `*PLAN.md` ignored.
 
 ## Requirements
 
-- Docker Compose
-- Bash
-- Kafka CLI tools for running scripts outside the demo container
-- Optional: `bats` for tests and `shellcheck` for Bash linting
+- Bash and common Unix tools: `awk`, `grep`, `sort`, `timeout`
+- Kafka CLI tools on `PATH`, or set `KAFKA_BIN_DIR`
+- `jq` for JSON-producing scripts
+- Docker Compose for the local demo
+- Optional: `bats` for tests and `shellcheck` for linting
 
-## Quick Start
+Common environment variables:
+
+```bash
+export KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+export KAFKA_COMMAND_CONFIG=/path/to/client.properties
+export KAFKA_BIN_DIR=/opt/kafka/bin
+```
+
+## Quick Start With Docker Compose
 
 ```bash
 docker compose up -d --build
-make lag
-make test
 ```
 
-The Compose demo starts a single Kafka broker, creates demo topics with fixed
-partition counts, then starts Kafka UI, a sample producer, and two sample
-consumers. Kafka is exposed on `localhost:9092`, and Kafka UI is available at
-`http://localhost:8080`; both work from WSL with Docker Desktop WSL integration.
+Kafka is available at `localhost:9092`. Kafka UI is available at
+`http://localhost:8080`. The demo disables auto topic creation and uses
+`topic-init` to create topics before the producer and consumers start.
 
-## Demo Topics
-
-`topic-init` and `samples/topics.sh` create these topics:
+Demo topics:
 
 | Topic | Partitions | Replication Factor |
 |---|---:|---:|
@@ -39,18 +41,106 @@ consumers. Kafka is exposed on `localhost:9092`, and Kafka UI is available at
 | `notifications` | 4 | 1 |
 | `healthcheck.kafka` | 1 | 1 |
 
-Kafka auto topic creation is disabled in the demo broker so sample services
-cannot accidentally create topics with default partition counts.
-
-## Commands
+## Common Commands
 
 ```bash
 make up
 make topics
 make lag
+make lag-report
+make snapshot
+make smoke
 make test
 make shellcheck
 make down
 ```
 
-Open Kafka UI in a browser at `http://localhost:8080`.
+## Scripts Included
+
+Lag and group tools:
+
+```bash
+./scripts/kafka-lag.sh --bootstrap localhost:9092 --group orders-worker --topic orders
+./scripts/kafka-lag-report.sh --bootstrap localhost:9092 --group orders-worker --topic orders --out samples/reports/lag-report.local.md
+./scripts/kafka-lag-check.sh --bootstrap localhost:9092 --group orders-worker --topic orders --max-lag 1000
+./scripts/kafka-lag-watch.sh --bootstrap localhost:9092 --group orders-worker --topic orders --interval 5
+./scripts/kafka-group-matrix.sh --bootstrap localhost:9092 --group orders-worker
+./scripts/kafka-topic-consumers.sh --bootstrap localhost:9092 --topic orders
+./scripts/kafka-lag-snapshot.sh --bootstrap localhost:9092 --group orders-worker --topic orders --out samples/reports/lag-snapshot.local.csv
+python3 ./scripts/kafka-lag-trend.py samples/reports/lag-snapshot.local.csv --group orders-worker --topic orders --out samples/reports/lag-trend.local.md
+./scripts/kafka-group-state.sh --bootstrap localhost:9092 --group orders-worker
+./scripts/kafka-rebalance-watch.sh --bootstrap localhost:9092 --group orders-worker
+```
+
+Topic and message tools:
+
+```bash
+./scripts/kafka-topic-watermark.sh --bootstrap localhost:9092 --topic orders
+./scripts/kafka-topic-size.sh --bootstrap localhost:9092 --topic orders
+./scripts/kafka-dead-consumers.sh --bootstrap localhost:9092
+./scripts/kafka-smoke-test.sh --bootstrap localhost:9092 --topic healthcheck.kafka
+./scripts/kafka-sample-json.sh --bootstrap localhost:9092 --topic orders --count 5 --from-beginning
+./scripts/kafka-sample-keys.sh --bootstrap localhost:9092 --topic orders --count 100 --from-beginning
+./scripts/kafka-partition-distribution.sh --bootstrap localhost:9092 --topic orders --count 1000 --from-beginning
+```
+
+Config and backup tools:
+
+```bash
+./scripts/kafka-topic-config-report.sh --bootstrap localhost:9092 --topic orders --out samples/reports/topic-config.local.md
+./scripts/kafka-topic-config-diff.sh --source-bootstrap localhost:9092 --target-bootstrap localhost:9092 --topic orders
+./scripts/kafka-offset-backup.sh --bootstrap localhost:9092 --group orders-worker --topic orders --out samples/reports/offsets-backup.local.json
+```
+
+Most reporting scripts support `--format table`, `--format csv`, or
+`--format markdown`; JSON is available on selected scripts where it is useful.
+
+## Using `--command-config`
+
+For SASL/TLS clusters, pass a Kafka client properties file through to Kafka CLI
+commands:
+
+```bash
+./scripts/kafka-lag.sh \
+  --bootstrap broker.example.com:9093 \
+  --command-config ./client.properties \
+  --group orders-worker
+```
+
+`KAFKA_COMMAND_CONFIG` provides the same default for all scripts.
+
+## Safety Notes
+
+The toolkit is read-only by default. Allowed write actions are limited to:
+
+- `samples/topics.sh` and `topic-init`, which create demo topics with
+  `--if-not-exists`
+- `kafka-smoke-test.sh`, which creates a healthcheck topic and produces one
+  explicit test message
+- sample producer containers that write demo messages
+- report scripts that write local files
+
+The v1 scripts do not delete topics, reset offsets, change ACLs, change topic
+configs, or perform production remediation.
+
+## Testing
+
+```bash
+make test
+```
+
+`make test` requires `bats` and fails when tests fail. `make test-optional`
+prints a skip message if `bats` is not installed.
+
+## Limitations
+
+- Topic size is an approximate retained message count based on offsets, not
+  disk byte size.
+- `kafka-dead-consumers.sh` can be slow on large clusters because it describes
+  all consumer groups.
+- Output parsing targets the standard Kafka CLI text formats and may need small
+  adjustments for heavily customized distributions.
+
+## License
+
+MIT

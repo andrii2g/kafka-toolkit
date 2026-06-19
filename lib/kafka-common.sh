@@ -8,6 +8,14 @@ kt_die() {
   exit "$code"
 }
 
+kt_info() {
+  echo "INFO: $*" >&2
+}
+
+kt_warn() {
+  echo "WARN: $*" >&2
+}
+
 kt_require_cmd() {
   local cmd="$1"
   command -v "$cmd" >/dev/null 2>&1 || kt_die "required command not found: $cmd"
@@ -31,5 +39,30 @@ kt_add_command_config_args() {
   if [[ -n "$config" ]]; then
     printf '%s\n' "--command-config"
     printf '%s\n' "$config"
+  fi
+}
+
+kt_timestamp_utc() {
+  date -u +"%Y-%m-%dT%H:%M:%SZ"
+}
+
+kt_trim() {
+  local value="$*"
+  value="${value#"${value%%[![:space:]]*}"}"
+  value="${value%"${value##*[![:space:]]}"}"
+  printf '%s\n' "$value"
+}
+
+kt_is_number() {
+  [[ "${1:-}" =~ ^[0-9]+$ ]]
+}
+
+kt_write_output() {
+  local out="$1"
+  if [[ "$out" == "-" ]]; then
+    cat
+  else
+    mkdir -p "$(dirname "$out")"
+    cat >"$out"
   fi
 }

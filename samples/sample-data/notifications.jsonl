@@ -1,0 +1,2 @@
+{"id":"sample-notification-1","topic":"notifications","type":"sample.notification.created","createdUtc":"2026-06-19T12:00:10Z","number":3001,"payload":{"userId":7,"channel":"email"}}
+{"id":"sample-notification-2","topic":"notifications","type":"sample.notification.created","createdUtc":"2026-06-19T12:01:10Z","number":3002,"payload":{"userId":8,"channel":"sms"}}

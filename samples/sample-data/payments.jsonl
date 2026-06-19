@@ -1,0 +1,2 @@
+{"id":"sample-payment-1","topic":"payments","type":"sample.payment.created","createdUtc":"2026-06-19T12:00:05Z","number":2001,"payload":{"userId":7,"amount":42.50,"currency":"USD"}}
+{"id":"sample-payment-2","topic":"payments","type":"sample.payment.created","createdUtc":"2026-06-19T12:01:05Z","number":2002,"payload":{"userId":8,"amount":19.99,"currency":"USD"}}

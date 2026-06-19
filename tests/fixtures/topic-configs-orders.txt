@@ -1,0 +1,2 @@
+Dynamic configs for topic orders are:
+  cleanup.policy=delete,retention.ms=604800000,segment.bytes=1073741824

@@ -1,4 +1,4 @@
-.PHONY: up down restart logs ps topics lag test test-optional shellcheck
+.PHONY: up down restart logs ps topics lag lag-report snapshot smoke test test-optional shellcheck
 
 up:
 	docker compose up -d --build
@@ -21,6 +21,15 @@ topics:
 
 lag:
 	./scripts/kafka-lag.sh --bootstrap localhost:9092 --group orders-worker --topic orders
+
+lag-report:
+	./scripts/kafka-lag-report.sh --bootstrap localhost:9092 --group orders-worker --topic orders --out samples/reports/lag-report.local.md
+
+snapshot:
+	./scripts/kafka-lag-snapshot.sh --bootstrap localhost:9092 --group orders-worker --topic orders --out samples/reports/lag-snapshot.local.csv
+
+smoke:
+	./scripts/kafka-smoke-test.sh --bootstrap localhost:9092 --topic healthcheck.kafka
 
 test:
 	@if ! command -v bats >/dev/null 2>&1; then \

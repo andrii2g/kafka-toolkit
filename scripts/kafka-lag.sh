@@ -10,10 +10,11 @@ BOOTSTRAP="$(kt_default_bootstrap)"
 COMMAND_CONFIG="${KAFKA_COMMAND_CONFIG:-}"
 GROUP=""
 TOPIC=""
+FORMAT="table"
 
 usage() {
   cat <<'USAGE'
-Usage: kafka-lag.sh --group GROUP [--topic TOPIC] [--bootstrap HOSTS] [--command-config FILE]
+Usage: kafka-lag.sh --group GROUP [--topic TOPIC] [--bootstrap HOSTS] [--command-config FILE] [--format table|csv|json]
 
 Show consumer group lag using kafka-consumer-groups.sh.
 USAGE
@@ -37,6 +38,10 @@ while [[ $# -gt 0 ]]; do
       COMMAND_CONFIG="${2:-}"
       shift 2
       ;;
+    --format)
+      FORMAT="${2:-}"
+      shift 2
+      ;;
     --help)
       usage
       exit 0
@@ -48,6 +53,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ -n "$GROUP" ]] || kt_die "--group is required"
+[[ "$FORMAT" == "table" || "$FORMAT" == "csv" || "$FORMAT" == "json" ]] || kt_die "--format must be table, csv, or json"
 
 KAFKA_CONSUMER_GROUPS="$(kt_kafka_cmd kafka-consumer-groups.sh)"
 kt_require_cmd "$KAFKA_CONSUMER_GROUPS"
@@ -67,6 +73,32 @@ csv="$(awk -f "$ROOT_DIR/lib/kafka-lag-parser.awk" <<<"$raw")"
 
 if [[ -n "$TOPIC" ]]; then
   csv="$(awk -F, -v topic="$TOPIC" 'NR == 1 || $2 == topic { print }' <<<"$csv")"
+fi
+
+if [[ "$FORMAT" == "csv" ]]; then
+  awk -F, 'BEGIN { OFS="," } NR == 1 { print "group","topic","partition","current_offset","log_end_offset","lag"; next } { print $1,$2,$3,$4,$5,$6 }' <<<"$csv"
+  exit 0
+fi
+
+if [[ "$FORMAT" == "json" ]]; then
+  kt_require_cmd jq
+  awk -F, 'NR > 1 { print }' <<<"$csv" | jq -R -s --arg group "$GROUP" --arg topic "$TOPIC" '
+    split("\n")[:-1]
+    | map(split(","))
+    | {
+        group: $group,
+        topic: (if $topic == "" then null else $topic end),
+        totalLag: (map(.[5] | if . == "" then 0 else tonumber end) | add // 0),
+        partitions: map({
+          group: .[0],
+          topic: .[1],
+          partition: (.[2] | tonumber),
+          currentOffset: (if .[3] == "" then null else (.[3] | tonumber) end),
+          logEndOffset: (if .[4] == "" then null else (.[4] | tonumber) end),
+          lag: (if .[5] == "" then null else (.[5] | tonumber) end)
+        })
+      }'
+  exit 0
 fi
 
 awk -F, -v group="$GROUP" -v topic="$TOPIC" '
