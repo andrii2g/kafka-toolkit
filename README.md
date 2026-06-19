@@ -15,6 +15,15 @@ docker compose ps
 docker compose logs topic-init
 ```
 
+Create or repair the demo topics from inside the Kafka container:
+
+```bash
+docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic orders --partitions 6 --replication-factor 1
+docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic payments --partitions 3 --replication-factor 1
+docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic notifications --partitions 4 --replication-factor 1
+docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic healthcheck.kafka --partitions 1 --replication-factor 1
+```
+
 Verify the demo topics were created with the intended partition counts:
 
 ```bash

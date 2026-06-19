@@ -71,6 +71,7 @@ services:
   sample-producer:
     build: ./samples/sample-producer
     container_name: kafka-toolkit-sample-producer
+    restart: unless-stopped
     depends_on:
       kafka:
         condition: service_healthy
@@ -83,6 +84,7 @@ services:
   sample-consumer-orders-slow:
     build: ./samples/sample-consumer
     container_name: kafka-toolkit-sample-consumer-orders-slow
+    restart: unless-stopped
     depends_on:
       kafka:
         condition: service_healthy
@@ -96,6 +98,7 @@ services:
   sample-consumer-payments-fast:
     build: ./samples/sample-consumer
     container_name: kafka-toolkit-sample-consumer-payments-fast
+    restart: unless-stopped
     depends_on:
       kafka:
         condition: service_healthy
