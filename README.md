@@ -24,9 +24,9 @@ make test
 ```
 
 The Compose demo starts a single Kafka broker, creates demo topics with fixed
-partition counts, then starts a sample producer and two sample consumers.
-Kafka is exposed on `localhost:9092`, which works from WSL with Docker Desktop
-WSL integration.
+partition counts, then starts Kafka UI, a sample producer, and two sample
+consumers. Kafka is exposed on `localhost:9092`, and Kafka UI is available at
+`http://localhost:8080`; both work from WSL with Docker Desktop WSL integration.
 
 ## Demo Topics
 
@@ -52,3 +52,5 @@ make test
 make shellcheck
 make down
 ```
+
+Open Kafka UI in a browser at `http://localhost:8080`.
