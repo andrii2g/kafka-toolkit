@@ -122,7 +122,3 @@ prints a skip message if `bats` is not installed.
   all consumer groups.
 - Output parsing targets the standard Kafka CLI text formats and may need small
   adjustments for heavily customized distributions.
-
-## License
-
-MIT
