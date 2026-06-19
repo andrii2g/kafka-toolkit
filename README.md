@@ -37,6 +37,23 @@ make shellcheck
 make down
 ```
 
+## Cleanup Docker Data
+
+To stop the demo containers and remove all Docker volumes for this Compose
+project, run:
+
+```bash
+docker compose down -v
+```
+
+The Makefile shortcut does the same cleanup:
+
+```bash
+make down
+```
+
+This removes the Kafka data created by the local demo.
+
 ## Scripts Included
 
 Lag and group tools:
