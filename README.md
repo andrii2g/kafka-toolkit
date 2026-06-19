@@ -65,8 +65,8 @@ Demo topics:
 
 These commands are useful after the demo is running. The script commands require
 Kafka CLI tools on your host `PATH`, or `KAFKA_BIN_DIR` pointing to a Kafka
-installation. `make topics` is the exception: it runs the Kafka CLI inside the
-Docker container.
+installation. `make topics`, `make lag`, and `make smoke` run Kafka CLI tools
+inside the Docker container and do not require host Kafka CLI tools.
 
 ```bash
 make up
@@ -78,6 +78,14 @@ make smoke
 make test
 make shellcheck
 make down
+```
+
+Host-side script variants are also available:
+
+```bash
+make topics-host
+make lag-host
+make smoke-host
 ```
 
 ## Cleanup Docker Data
