@@ -36,7 +36,7 @@ docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafk
 Open Kafka UI in a browser:
 
 ```text
-http://localhost:8080
+http://localhost:18080
 ```
 
 After the sample producer and consumers have run for a short time, verify lag
@@ -47,7 +47,7 @@ docker compose exec kafka /opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-se
 ```
 
 Kafka is available at `localhost:9092`. Kafka UI is available at
-`http://localhost:8080`. The demo disables auto topic creation and uses a
+`http://localhost:18080`. The demo disables auto topic creation and uses a
 `topic-init` helper service to create demo topics after the broker is healthy.
 The broker uses the pinned official `apache/kafka:3.9.0` image in single-node
 KRaft mode.
