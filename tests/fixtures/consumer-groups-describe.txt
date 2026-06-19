@@ -1,0 +1,4 @@
+GROUP           TOPIC          PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID HOST CLIENT-ID
+orders-worker   orders         0          12500           13000           500             -           -    -
+orders-worker   orders         1          9000            9000            0               -           -    -
+orders-worker   payments       0          -               100             -               -           -    -
