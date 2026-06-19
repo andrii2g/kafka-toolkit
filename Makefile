@@ -17,6 +17,9 @@ ps:
 	docker compose ps
 
 topics:
+	./samples/topics-docker.sh
+
+topics-host:
 	./samples/topics.sh --bootstrap localhost:9092
 
 lag:

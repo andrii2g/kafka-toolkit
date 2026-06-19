@@ -18,11 +18,11 @@ docker compose logs topic-init
 Create or repair the demo topics from inside the Kafka container:
 
 ```bash
-docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic orders --partitions 6 --replication-factor 1
-docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic payments --partitions 3 --replication-factor 1
-docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic notifications --partitions 4 --replication-factor 1
-docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic healthcheck.kafka --partitions 1 --replication-factor 1
+make topics
 ```
+
+Kafka may warn that topic names containing `.` or `_` can collide in metrics.
+That warning is expected for `healthcheck.kafka`; topic creation still succeeds.
 
 Verify the demo topics were created with the intended partition counts:
 
@@ -65,7 +65,8 @@ Demo topics:
 
 These commands are useful after the demo is running. The script commands require
 Kafka CLI tools on your host `PATH`, or `KAFKA_BIN_DIR` pointing to a Kafka
-installation.
+installation. `make topics` is the exception: it runs the Kafka CLI inside the
+Docker container.
 
 ```bash
 make up
