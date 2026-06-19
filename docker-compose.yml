@@ -1,6 +1,6 @@
 services:
   kafka:
-    image: bitnami/kafka:3.9.0
+    image: bitnami/kafka:3.9
     container_name: kafka-toolkit-kafka
     ports:
       - "9092:9092"
@@ -28,7 +28,7 @@ services:
       start_period: 30s
 
   topic-init:
-    image: bitnami/kafka:3.9.0
+    image: bitnami/kafka:3.9
     container_name: kafka-toolkit-topic-init
     depends_on:
       kafka:
