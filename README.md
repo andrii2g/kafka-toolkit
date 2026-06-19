@@ -3,25 +3,6 @@
 Small Bash/Python tools for day-to-day Kafka diagnostics, plus a Docker Compose
 demo with Kafka, Kafka UI, sample producer, and sample consumers.
 
-The local implementation plan is intentionally not committed. `.gitignore`
-keeps `*PLAN.md` ignored.
-
-## Requirements
-
-- Bash and common Unix tools: `awk`, `grep`, `sort`, `timeout`
-- Kafka CLI tools on `PATH`, or set `KAFKA_BIN_DIR`
-- `jq` for JSON-producing scripts
-- Docker Compose for the local demo
-- Optional: `bats` for tests and `shellcheck` for linting
-
-Common environment variables:
-
-```bash
-export KAFKA_BOOTSTRAP_SERVERS=localhost:9092
-export KAFKA_COMMAND_CONFIG=/path/to/client.properties
-export KAFKA_BIN_DIR=/opt/kafka/bin
-```
-
 ## Quick Start With Docker Compose
 
 ```bash
@@ -140,7 +121,3 @@ prints a skip message if `bats` is not installed.
   all consumer groups.
 - Output parsing targets the standard Kafka CLI text formats and may need small
   adjustments for heavily customized distributions.
-
-## License
-
-MIT
