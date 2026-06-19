@@ -13,7 +13,8 @@ docker compose up -d --build
 Kafka is available at `localhost:9092`. Kafka UI is available at
 `http://localhost:8080`. The demo disables auto topic creation and uses
 `topic-init` to create topics before the producer and consumers start. The
-broker uses the pinned `bitnami/kafka:3.9` image in single-node KRaft mode.
+broker uses the pinned official `apache/kafka:3.9.0` image in single-node KRaft
+mode.
 
 Demo topics:
 
