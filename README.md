@@ -54,6 +54,15 @@ make down
 
 This removes the Kafka data created by the local demo.
 
+If Kafka reports unhealthy during startup, clean the old demo data and inspect
+the broker logs:
+
+```bash
+docker compose down -v
+docker compose logs kafka
+docker compose up -d --build
+```
+
 ## Scripts Included
 
 Lag and group tools:
