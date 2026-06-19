@@ -37,7 +37,7 @@ services:
     command: |
         set -eu
         for i in $$(seq 1 60); do
-          if kafka-topics.sh --bootstrap-server kafka:29092 --list >/dev/null 2>&1; then
+          if /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --list >/dev/null 2>&1; then
             echo "Kafka is ready for topic creation"
             break
           fi
@@ -48,11 +48,11 @@ services:
           echo "Waiting for Kafka topic API ($$i/60)"
           sleep 2
         done
-        kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic orders --partitions 6 --replication-factor 1
-        kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic payments --partitions 3 --replication-factor 1
-        kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic notifications --partitions 4 --replication-factor 1
-        kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic healthcheck.kafka --partitions 1 --replication-factor 1
-        kafka-topics.sh --bootstrap-server kafka:29092 --describe
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic orders --partitions 6 --replication-factor 1
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic payments --partitions 3 --replication-factor 1
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic notifications --partitions 4 --replication-factor 1
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic healthcheck.kafka --partitions 1 --replication-factor 1
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --describe
         echo "Topic initialization complete"
 
   kafka-ui:

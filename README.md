@@ -18,10 +18,10 @@ docker compose logs topic-init
 Verify the demo topics were created with the intended partition counts:
 
 ```bash
-docker compose exec kafka kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic orders
-docker compose exec kafka kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic payments
-docker compose exec kafka kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic notifications
-docker compose exec kafka kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic healthcheck.kafka
+docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic orders
+docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic payments
+docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic notifications
+docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic healthcheck.kafka
 ```
 
 Open Kafka UI in a browser:
@@ -34,7 +34,7 @@ After the sample producer and consumers have run for a short time, verify lag
 from inside the Kafka container:
 
 ```bash
-docker compose exec kafka kafka-consumer-groups.sh --bootstrap-server kafka:29092 --describe --group orders-worker
+docker compose exec kafka /opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server kafka:29092 --describe --group orders-worker
 ```
 
 Kafka is available at `localhost:9092`. Kafka UI is available at
