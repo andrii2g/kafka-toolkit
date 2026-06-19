@@ -33,7 +33,7 @@ docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafk
 docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic healthcheck.kafka
 ```
 
-Open Kafka UI in a browser:
+Open Provectus Kafka UI in a browser:
 
 ```text
 http://localhost:18080
@@ -46,7 +46,7 @@ from inside the Kafka container:
 docker compose exec kafka /opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server kafka:29092 --describe --group orders-worker
 ```
 
-Kafka is available at `localhost:9092`. Kafka UI is available at
+Kafka is available at `localhost:9092`. Provectus Kafka UI is available at
 `http://localhost:18080`. The demo disables auto topic creation and uses a
 `topic-init` helper service to create demo topics after the broker is healthy.
 The broker uses the pinned official `apache/kafka:3.9.0` image in single-node
