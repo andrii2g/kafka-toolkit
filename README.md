@@ -6,8 +6,35 @@ demo with Kafka, Kafka UI, sample producer, and sample consumers.
 
 ## Quick Start With Docker Compose
 
+Start from a clean local demo state:
+
 ```bash
+docker compose down -v --remove-orphans
 docker compose up -d --build
+docker compose ps
+docker compose logs topic-init
+```
+
+Verify the demo topics were created with the intended partition counts:
+
+```bash
+docker compose exec kafka kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic orders
+docker compose exec kafka kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic payments
+docker compose exec kafka kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic notifications
+docker compose exec kafka kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic healthcheck.kafka
+```
+
+Open Kafka UI in a browser:
+
+```text
+http://localhost:8080
+```
+
+After the sample producer and consumers have run for a short time, verify lag
+from inside the Kafka container:
+
+```bash
+docker compose exec kafka kafka-consumer-groups.sh --bootstrap-server kafka:29092 --describe --group orders-worker
 ```
 
 Kafka is available at `localhost:9092`. Kafka UI is available at
@@ -26,6 +53,10 @@ Demo topics:
 | `healthcheck.kafka` | 1 | 1 |
 
 ## Common Commands
+
+These commands are useful after the demo is running. The script commands require
+Kafka CLI tools on your host `PATH`, or `KAFKA_BIN_DIR` pointing to a Kafka
+installation.
 
 ```bash
 make up
